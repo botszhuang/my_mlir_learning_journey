@@ -1,6 +1,12 @@
 # My MLIR Learning Journy - Installation
 
-<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto;"><tbody><tr><td style="text-align: center;"><a href="https://commons.wikimedia.org/wiki/File:MLIR_Logo.svg" style="margin-left: auto; margin-right: auto;" title="LLVM, Public domain, via Wikimedia Commons"><img height="400" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/MLIR_Logo.svg/960px-MLIR_Logo.svg.png" width="400" /></a></td></tr><tr><td class="tr-caption" style="text-align: center;">LLVM. MLIR Logo. 25 May 2021. Wikimedia Commons, commons.wikimedia.org/wiki/File:MLIR_Logo.svg. Accessed 2 Apr. 2026.</td></tr></tbody></table>
+<div align="center">
+  <a href="https://commons.wikimedia.org/wiki/File:MLIR_Logo.svg">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/MLIR_Logo.svg/400px-MLIR_Logo.svg.png" width="400" alt="MLIR Logo">
+  </a>
+  <br>
+  <sub>LLVM. MLIR Logo. 25 May 2021. Wikimedia Commons. Accessed 2 Apr. 2026.</sub>
+</div>
 
 **Disclaimer** : This is a documentation of my learning process only. Following these steps does not guarantee identical results.
 
@@ -39,23 +45,23 @@ cmake -G Ninja ../llvm \
    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
 ```
 
-- **-G Ninja** : Faster build system selection. Chooses the Ninja build system for faster compilation.
+- ```-G Ninja``` : Faster build system selection. Chooses the Ninja build system for faster compilation.
 
-- **-DLLVM_ENABLE_PROJECTS=mlir** : Compiles MLIR along with LLVM.
+- ```-DLLVM_ENABLE_PROJECTS=mlir``` : Compiles MLIR along with LLVM.
 
-- **-DLLVM_BUILD_EXAMPLES=ON** : Builds official MLIR/LLVM examples for reference.
+- ```-DLLVM_BUILD_EXAMPLES=ON``` : Builds official MLIR/LLVM examples for reference.
 
-- **-DLLVM_TARGETS_TO_BUILD="Native;ARM;X86"** : Target CPU support. Specifies target architectures: ‘Native’ for the host CPU, plus ARM and X86 support.
+- ```-DLLVM_TARGETS_TO_BUILD="Native;ARM;X86"``` : Target CPU support. Specifies target architectures: ‘Native’ for the host CPU, plus ARM and X86 support.
 
-- **-DCMAKE_BUILD_TYPE=Release** : Release optimized mode for performance and much smaller in size
+- ```-DCMAKE_BUILD_TYPE=Release``` : Release optimized mode for performance and much smaller in size
 
-- **-DLLVM_ENABLE_ASSERTIONS=ON** : If any error while running, it will print a error massage.
+- ```-DLLVM_ENABLE_ASSERTIONS=ON``` : If any error while running, it will print a error massage.
 
-- **-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++** : Choose Clang to bild the entire system
+- ```-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++``` : Choose Clang to bild the entire system
 
-- **-DLLVM_CCACHE_BUILD=ON** : With ccache enabled, LLVM/MLIR will remember the already-finished parts, making it much faster if you ever need to recompile.
+- ``-DLLVM_CCACHE_BUILD=ON``` : With ccache enabled, LLVM/MLIR will remember the already-finished parts, making it much faster if you ever need to recompile.
 
-- **-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON** : Ninja builds the porjects and save to the output files to the current directory, llvm-project/build
+- ```-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON``` : Ninja builds the porjects and save to the output files to the current directory, llvm-project/build
 
 ## Verify the Build.
 It take hours depending on the native CPU.
@@ -65,8 +71,9 @@ cmake --build . --target check-mlir
 sudo cmake --build . --target install
 ```
 
-```cmake — build . — target check-mlir``` : Verifying the Build and it take 5–10 minutes depending on the native CPU.
-```cmake — build . — target install ``` : It copies the finished executable files, headers, and libraries from the local build directory to ```/usr/local/binor``` the path specified by ```CMAKE_INSTALL_PREFIX```.
+- ```cmake — build . — target check-mlir``` : Verifying the Build and it take 5–10 minutes depending on the native CPU.
+
+- ```cmake — build . — target install ``` : It copies the finished executable files, headers, and libraries from the local build directory to ```/usr/local/binor``` the path specified by ```CMAKE_INSTALL_PREFIX```.
 
 ## Check the installation of MLIR
 
@@ -87,7 +94,7 @@ Here the LLVM and MLIR installation is done and it is ready to go programming wi
 
 [2] Lattner, C., Pienaar, J., et al. (2020). “MLIR: A Compiler Infrastructure for the End of Moore’s Law.” Published in the 2021 IEEE/ACM International Symposium on Code Generation and Optimization (CGO).[arXiv:2002.11054](https://arxiv.org/abs/2002.11054)
 
-[3][Introduction to MLIR]( https://www.stephendiehl.com/posts/mlir_introduction/)
+[3] [Introduction to MLIR]( https://www.stephendiehl.com/posts/mlir_introduction/)
 
 ## 純粹抱怨、碎碎念
 >因為老黃不想遵守大家一起訂出來的工業標準，所以現在大家為了GPU通解得降到更底層的編譯器 / 組合語言去工作。這不是我們愛找麻煩，是環境逼我們的。
