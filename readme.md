@@ -1,4 +1,4 @@
-# My MLIR Learning Journey 🚀
+# My MLIR Track 🚀
 
 A repository dedicated to documenting my progress, experiments, and notes as I dive into the world of MLIR (Multi-Level Intermediate Representation) and LLVM.
 
