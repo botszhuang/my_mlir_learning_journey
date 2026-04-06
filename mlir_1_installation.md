@@ -1,4 +1,4 @@
-# My MLIR Learning Journy - Installation
+# My MLIR Track - Installation
 
 **Disclaimer** : This is a documentation of my learning process only. Following these steps does not guarantee identical results.
 

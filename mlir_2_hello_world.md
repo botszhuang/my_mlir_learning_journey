@@ -1,4 +1,4 @@
-# My MLIR Learning Journy - hello world
+# My MLIR Track - hello world
 
 **Disclaimer** : This is a documentation of my learning process only. Following these steps does not guarantee identical results.
 
@@ -145,7 +145,7 @@ sample_llvm result: 30
 
 
 
-Check out the full code for the example on [GitHub](https://github.com/botszhuang/my_mlir_learning_journey/tree/main/2_hello)
+Check out [the full code for the example](2_hello_world)
 
 ## Reference
 [1] [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html)
