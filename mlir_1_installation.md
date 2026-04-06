@@ -1,5 +1,7 @@
 # My MLIR Track #1 - Installation
 
+By Botsz on March 31, 2026
+
 **Disclaimer** : This is a documentation of my learning process only. Following these steps does not guarantee identical results.
 
 In the beginning, LLVM was developed to investigate dynamic compilation techniques for both static and dynamic programming languages. However, now day LLVM severs as portable, high-level assembly language, called language-independent intermediate representation (IR) to optimize the computation [1].
@@ -82,7 +84,7 @@ Here the LLVM and MLIR installation is done and it is ready to go programming wi
 
 ## Reference
 
-[1] [LLVM Language Reference Manual](https://www.example.com)<a href="https://llvm.org/docs/LangRef.html"
+[1] [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html)
 
 [2] Lattner, C., Pienaar, J., et al. (2020). “MLIR: A Compiler Infrastructure for the End of Moore’s Law.” Published in the 2021 IEEE/ACM International Symposium on Code Generation and Optimization (CGO).[arXiv:2002.11054](https://arxiv.org/abs/2002.11054)
 

@@ -6,7 +6,7 @@
 #include <mlir/IR/Verifier.h>
 #include <mlir/Dialect/Arith/IR/Arith.h>
 #include <mlir/Dialect/Func/IR/FuncOps.h>
-#include "mlir/Dialect/LLVMIR/LLVMDialect.h"
+#include <mlir/Dialect/LLVMIR/LLVMDialect.h>
 #include <mlir/Target/LLVMIR/Dialect/All.h>
 #include <mlir/Target/LLVMIR/Export.h>
 #include <mlir/Conversion/ArithToLLVM/ArithToLLVM.h>
@@ -28,61 +28,65 @@ int main() {
 
     dialect_registry.insert<arith::ArithDialect>();
     dialect_registry.insert<func::FuncDialect>();
-    dialect_registry.insert<LLVM::LLVMDialect>();
+
+    // 1-1. Register the LLVM Dialect and the translation interfaces
+    dialect_registry.insert<LLVM::LLVMDialect>();  
 
     registerBuiltinDialectTranslation(dialect_registry);
     registerLLVMDialectTranslation(dialect_registry);
+
+    // 1-2. Initialize LLVM targets for the JIT
     registerAllToLLVMIRTranslations(dialect_registry);
 
-    // 1. Setup Context and Module
+    // Setup Context and Module
     MLIRContext context (dialect_registry);
     context.loadAllAvailableDialects();
 
-    // 0. Initialize LLVM targets for the JIT
+    // 1-3. Initialize LLVM targets for the JIT
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
 
     auto loc = UnknownLoc::get(&context);
     auto module = ModuleOp::create(loc);
 
-    // 2. Create Types
+    // Create Types
     auto i32Type = IntegerType::get(&context, 32) ;
 
-    // 3. Create Operations
+    // Create Operations
     OpBuilder builder(&context);
     ImplicitLocOpBuilder b(loc, builder );
 
     b.setInsertionPointToEnd(module.getBody());
 
-    // 4. Create the Function: () -> i32
+    // Create the Function: () -> i32
     auto funcType = b.getFunctionType({}, {i32Type});
     auto funcOp = b.create<FuncOp>("get_forty_two", funcType);
     
     builder.insert(funcOp);
 
-    // 5. Create the Body Block
+    // Create the Body Block
     auto entryBlock = funcOp.addEntryBlock();
     b.setInsertionPointToStart(entryBlock);
 
-    // 6. Create the Constant and Return
+    // Create the Constant and Return
     auto fortyTwo = b.create<ConstantIntOp>(42, 32); // %c42_i32 = arith.constant 42 : i32
     b.create<ReturnOp>(fortyTwo.getResult()); // return %c42_i32 : i32
 
-    // 7.Verify the module
+    // Verify the module
     if ( module.verify().failed() ) {
         llvm::errs() << "Module verification failed! " ;
         return EXIT_FAILURE ;
     }
 
-    // 8.Print the mlir Module
+    // Print the mlir Module
     printf ("Generated MLIR Module:\n");
     module->print(llvm::outs());
     puts("-----------------------------------");
 
-    // 9. Clean up and Exit 
+    // Clean up and Exit 
     // the MLIRContext will automatically clean up all MLIR objects when it goes out of scope.
  
-    // 10. Run the Pass Manager
+    // 2. Run the Pass Manager
     PassManager pass_manager(&context);
     pass_manager.addPass(createArithToLLVMConversionPass());
     pass_manager.addPass(createConvertFuncToLLVMPass());
@@ -91,24 +95,24 @@ int main() {
         return EXIT_FAILURE ;
     }
 
-    // 11. Print the llvm Module
+    // Print the llvm Module
     printf ("Generated LLVM Module:\n");
     module->print(llvm::outs());
     puts("-----------------------------------");
 
-    // 12. Convert to LLVM IR
+    // 3. Transforms MLIR to LLVM IR
     llvm ::LLVMContext llvmContext = llvm::LLVMContext();
     auto llmvModule = mlir::translateModuleToLLVMIR(module, llvmContext);
     if (!llmvModule) {
         llvm::errs() << "Failed to translate MLIR module to LLVM IR! " ;
         return EXIT_FAILURE ;
     }
-    // 13. Print the LLVM IR
+    // Print the LLVM IR
     printf ("Generated LLVM IR:\n");
     llmvModule->print(llvm::outs(), nullptr);   
     puts("-----------------------------------");
 
-    // 14. JIT Execution
+    // 4.JIT Execution
     auto maybeEngine = ExecutionEngine::create(module);
     if ( !maybeEngine ){
         llvm::errs() << "Failed to create execution engine! " ;
@@ -122,7 +126,7 @@ int main() {
         return EXIT_FAILURE ;
     }
     
-    // 15. Call the function and print the result
+    // Call the function and print the result
     auto ans = reinterpret_cast <int(*)()>(*funcPtr) ;
     if (!ans) {
         llvm::errs() << "Failed to lookup function in execution engine! " ;

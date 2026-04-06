@@ -1,5 +1,7 @@
 # My MLIR Track #3 - Simple MLIR Example by C++
 
+By Botsz on April 3, 2026
+
 **Disclaimer** : This is a documentation of my learning process only. Following these steps does not guarantee identical results.
 
 Generating an MLIR module using the C++ API—typically via OpBuilder—is generally more efficient and robust than writing it by hand. In a programmatic environment, maintaining the code becomes significantly easier; for instance, if you need to update a data type from ```f32``` to ```f16``` across an entire module, changing a single variable in C++ is much faster and more reliable than performing a "find and replace" in a large text file.
@@ -13,15 +15,19 @@ int mian(){
 }
 ```
 
-In order to construct a simple MLIR module with the C++ API, essential components must be integrated in a specific order.
+---
 
+**The complete source code is located in the [3_modul_by_Cpp](3_modul_by_Cpp) directory.** 
+Constructing an MLIR module via the C++ API involves a specific integration order for its core components:
+
+### 1.Registration of Dialects
 The registration of Dialects is required to ensure MLIR engine to recognize and utilize specific operation sets, such as Arith for mathematical computations and Func for function definitions.
 ```cpp
 DialectRegistry dialect_registry;
 dialect_registry.insert<ArithDialect>();
 dialect_registry.insert<FuncDialect>();
 ```
-
+### 2. Setup MLIRContext & ModuleOp
 The **MLIRContext** acts as the global container of all MLIR state , including unique symbols and operation definitions. **MLIRContext** holds the definitions and rules that make the code valid. Therefore, the necessary Dialects must be explicitly loaded for the context to recognize specific operations.
 Once the context is prepared, **Location** (```loc```) must be established. This location is registered within the context and serves as a mandatory metadata tag for every operation created thereafter. 
 Then, a **ModuleOp** (```module```) is initialized as the top-level container. While the context provides the rules and vocabulary, the ModuleOp acts as the structural root that physically holds the functions and arithmetic operations defined by the developer.
@@ -32,6 +38,7 @@ auto loc = UnknownLoc::get(&context);
 auto module = ModuleOp::create(loc);
 ```
 
+### 3.Create Types
 A variable like ```i32Type``` represents a **Type Object** that is owned and managed by the MLIRContext.
 Once ```i32Type``` is defined, it cannot be "changed" into an i64 or any other format.
 If a different type is needed, the developer must simply request a new one from the context.
@@ -39,6 +46,7 @@ If a different type is needed, the developer must simply request a new one from 
 auto i32Type = IntegerType::get(&context, 32) ;
 ```
 
+### 4. Create OpBuilder & ImplicitLocOpBuilders
 An **OpBuilder** is utilized as a cursor to manage the insertion of functions and operations into the ModuleOp. 
 By passing the established Location and Type Objects to the builder, the developer programmatically assembles the SSA (Static Single Assignment) graph that forms the logic of the MLIR module.
 Forthemore, an **ImplicitLocOpBuilder** is emplyed to simplify the programming process.
@@ -49,6 +57,7 @@ ImplicitLocOpBuilder b(loc, builder );
 b.setInsertionPointToEnd(module.getBody());
 ```
 
+### 5.Function Operator & Entry Block
 To construct a **Function Operator**(```funcOp```), the ```i32Type``` is used to define the function's input and output types. 
 Then, the OpBuilder's insertion point is set to the function's body to allow for the addition of further operations.
 ```cpp
@@ -70,6 +79,7 @@ auto fortyTwo = b.create<ConstantIntOp>(42, 32); // %c42_i32 = arith.constant 42
 b.create<ReturnOp>(fortyTwo.getResult()); // return %c42_i32 : i32
 ```
 
+### 6.Verify and Print the Module
 Before processing the IR further, it is critical to call ```module.verify()```. This internal check ensures that the C++ construction phase are correct.
 
 Once verified, the module can be serialized into its human-readable text format. By calling ```module->print(llvm::outs())```, the internal data structures are converted back into the standard MLIR assembly language. 
@@ -91,10 +101,11 @@ module->print(llvm::outs());
 ```
 The MLIRContext owns all attributes, types, and operation definitions and it will automatically clean up these objects when it goes out of scope.
 
-Check out [the full code for the example](3_modul_by_Cpp)
 
 ## Reference
-[1] [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html)
+[1] [MLIR. (n.d.). 'func' Dialect. MLIR Documentation.](https://mlir.llvm.org/docs/Dialects/Func/)
 
-[2] [Introduction to MLIR](https://www.stephendiehl.com/posts/mlir_introduction/)
+[2] [MLIR. (n.d.). 'arith' Dialect. MLIR Documentation.](https://mlir.llvm.org/docs/Dialects/ArithOps/)
+
+[3] [Introduction to MLIR](https://www.stephendiehl.com/posts/mlir_introduction/)
 

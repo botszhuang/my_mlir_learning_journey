@@ -1,9 +1,12 @@
 # My MLIR Track #2 - hello world
 
+By Botsz on April 2, 2026
+
 **Disclaimer** : This is a documentation of my learning process only. Following these steps does not guarantee identical results.
 
-- **Write a LLVM IR module**
-Write a simple LLVM module that returns an exit signal, compile it into a shared library, and interface with it using C and Python.
+- **Write a LLVM IR**
+
+Write a simple LLVM IR that returns an exit signal, compile it into a shared library, and interface with it using C and Python.
 
 ```bash
 # File: simple_llvm.ll
@@ -63,9 +66,9 @@ attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-l
 ```  
 It works; however, the generated sample_c.ll is target-specific rather than platform-independent.
 
-## Compiling this LLVM IR module
+## Compiling this LLVM module 
 ```bash
-#Translates platform-independent LLVM IR into target-specific machine code.
+#Translates platform-independent LLVM module into target-specific machine code.
 $ llc -filetype=obj --relocation-model=pic sample_c.ll    -o sample_c.o
 $ llc -filetype=obj --relocation-model=pic simple_llvm.ll -o sample_llvm.o
 ```
@@ -103,7 +106,7 @@ int main() {
     return 0 ;
 }
 ```
-Here, I execute the main program to interface with the LLVM module and retrieve the computational results.
+Here, I execute the main program and retrieve the computational results.
 
 ```bash
 $ clang main.c -Lout -lsample_c -lsample_llvm -Wl,-rpath,. -o main.exe
@@ -131,7 +134,7 @@ print(f"sample_llvm result: {module_llvm.sample_llvm()}")
 ```
 If the Python call the shared library successfully, it will print the number 30.
 ```bash 
-# Execute the LLVM IR directly
+# Execute 
 $ python3 run.py
 
 Running main.exe...

@@ -13,53 +13,55 @@ using namespace mlir::func;
 
 int main() {
     
+    // 1.Registration of Dialects
     DialectRegistry dialect_registry;
 
     dialect_registry.insert<ArithDialect>();
     dialect_registry.insert<FuncDialect>();
 
-    // 1. Setup Context and Module
+    // 2. setup MLIRContext & ModuleOp
     MLIRContext context (dialect_registry);
     context.loadAllAvailableDialects();
 
     auto loc = UnknownLoc::get(&context);
     auto module = ModuleOp::create(loc);
 
-    // 2. Create Types
+    // 3. Create Types
     auto i32Type = IntegerType::get(&context, 32) ;
 
-    // 3. Create Operations
+    // 4. Create OpBuilders
     OpBuilder builder(&context);
     ImplicitLocOpBuilder b(loc, builder );
 
     b.setInsertionPointToEnd(module.getBody());
 
-    // 4. Create the Function: () -> i32
+    // 5-1. Create Function Operator  
+    // Create the Function: () -> i32
     auto funcType = b.getFunctionType({}, {i32Type});
     auto funcOp = b.create<FuncOp>("get_forty_two", funcType);
     
     builder.insert(funcOp);
 
-    // 5. Create the Body Block
+    // 5-2. Create the Body Block
     auto entryBlock = funcOp.addEntryBlock();
     b.setInsertionPointToStart(entryBlock);
 
-    // 6. Create the Constant and Return
+    // Create the Constant and Return
     auto fortyTwo = b.create<ConstantIntOp>(42, 32); // %c42_i32 = arith.constant 42 : i32
     b.create<ReturnOp>(fortyTwo.getResult()); // return %c42_i32 : i32
 
-    // 7.Verify the module
+    // 6-1.Verify the module
     if ( module.verify().failed() ) {
         llvm::errs() << "Module verification failed! " ;
         return EXIT_FAILURE ;
     }
 
-    // 8.Print the mlir Module
+    // 6-2.Print the MLIR Module
     printf ("Generated MLIR Module:\n");
     module->print(llvm::outs());
     puts("-----------------------------------");
 
-    // 9. Clean up and Exit 
+    // 7. Clean up and Exit 
     // the MLIRContext will automatically clean up all MLIR objects when it goes out of scope.
     
 
