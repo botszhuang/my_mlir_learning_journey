@@ -92,7 +92,17 @@ $ clang -shared -fPIC sample_llvm.o -o libsample_llvm.so
 ## Linking into an Executable file
 
 ### Solution 1 ### 
-Here, run the shared libaray with **C** language, 
+Here, by **C** language the shared libaray are called by ```main.c``` as a function.
+```cpp
+#include <stdio.h>
+extern int sample_c() ;
+extern int sample_llvm() ;
+int main() {
+    printf("sample_c: %d\n", sample_c());
+    printf("sample_llvm: %d\n", sample_llvm());
+    return 0 ;
+}
+```
 ```bash
 $ clang main.c -Lout -lsample_c -lsample_llvm -Wl,-rpath,. -o main.exe$./main.exe
 ```
