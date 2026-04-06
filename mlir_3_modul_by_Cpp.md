@@ -1,4 +1,4 @@
-# My MLIR Learning Journy - Simple MLIR Example
+# My MLIR Track #3 - Simple MLIR Example by C++
 
 **Disclaimer** : This is a documentation of my learning process only. Following these steps does not guarantee identical results.
 
