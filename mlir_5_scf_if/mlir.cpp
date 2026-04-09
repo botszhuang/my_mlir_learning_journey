@@ -30,11 +30,11 @@ int main() {
 
     b.setInsertionPointToEnd(module.getBody());
 
-    // Create the Function: get_forty_two ( i32 ) -> i1
+    // Create the Function: control_flow_demo ( i32 ) -> i1
     // i32: input argument type
     // i1: return type
     auto funcType = b.getFunctionType({i32Type}, {i1Type});
-    auto funcOp = b.create<mlir::func::FuncOp>("get_forty_two", funcType);
+    auto funcOp = b.create<mlir::func::FuncOp>("control_flow_demo", funcType);
     
     // Create the Body Block
     auto entryBlock = funcOp.addEntryBlock();

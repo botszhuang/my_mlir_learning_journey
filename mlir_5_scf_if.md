@@ -7,7 +7,7 @@ By Botsz on April 8, 2026
 This example demonstrates if-structure control flow whixh implemented in C++. 
 The logic is compiled into a shared library and then called via Python which executing native machine code rather than relying on JIT complilation. 
 This approch provides a relative simple and clean interface to control multiple complex funcstions.
-The complete source code is available in [5_mlir_scf_if](./5_mlir_scf_if/).
+The complete source code is available in [mlir_5_scf_if](./mlir_5_scf_if/).
 
 The example of if-structure control flow in MLIR is equivalent to, in C++,
 
@@ -44,6 +44,14 @@ auto fortyTwo = b.create<mlir::arith::ConstantIntOp>(42, bitWidth32);
 auto yes  = b.create<mlir::arith::ConstantOp>(b.getBoolAttr(true));  
 auto no   = b.create<mlir::arith::ConstantOp>(b.getBoolAttr(false)); 
 ```
+**Note:** An ```mlir::Value``` is a ```value-type handle``` (similar to a ```std::shared_ptr``` but much lighter).
+While the handle itself is stored in the variable's local memory space, it acts as a gateway to the IR graph (operation).
+It includes that 
+* ```Type```: ```v.getType()``` tells what the data is (the shape, the element type, etc.). 
+* ```Def```: ```v.getDefineingOp``` looks "upstream" to find the Operation that produced the value.
+* ```Used```: ```v.getUsers``` looks "downstream" to find the "Used" list—the operations consuming this data.
+
+
 ## 3. If-structure Control Flow
 We must claculate the condition before initializing the ```if``` operation. With the ```arith``` dialect, we compare the input against the constant (42) to generate a boolean result.
 Then, we use ```scf::IfOp``` to handle the control flow logic.

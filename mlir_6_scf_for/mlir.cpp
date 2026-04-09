@@ -28,13 +28,14 @@ int main() {
     mlir::ImplicitLocOpBuilder b(loc, builder );
     b.setInsertionPointToStart(module.getBody());
 
-    // Create the Function: get_forty_two ( i32 ) -> i1
+    // Create the Function: control_flow_for ( i32 ) -> i32
     auto funcType = b.getFunctionType({i32Type}, {i32Type});
-    auto funcOp = b.create<mlir::func::FuncOp>("get_forty_two", funcType);   
+    auto funcOp = b.create<mlir::func::FuncOp>("control_flow_for", funcType);   
     auto entryBlock = funcOp.addEntryBlock();
     b.setInsertionPointToStart(entryBlock);
 
-    // Get the input argument0
+    // 'forLowBound', 'forUpBound', and 'forStep' define the range.
+    // 'sum_init' is the initial value for the loop-carried variable.
     auto forLowBound = b.create<mlir::arith::ConstantIndexOp>(0);
     auto forUpBound  = b.create<mlir::arith::IndexCastOp>( b.getIndexType(),entryBlock->getArgument(0));
     auto forStep     = b.create<mlir::arith::ConstantIndexOp>(1);
