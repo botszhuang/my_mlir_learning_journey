@@ -38,15 +38,9 @@ auto forStep     = b.create<mlir::arith::ConstantIndexOp>(1);
 auto sum_init    = b.create<mlir::arith::ConstantIntOp>( i32Type, 0);
 ```
 ## 2. Initialize the ```scf::ForOp```
-The loop is created by four primary inputs to control the **Bounds** and **Step** to control hte loop number. 
+The loop is created by four primary inputs to control the **Bounds** and **Step** to control the loop number. 
 The ```mlir::ValueRange{ sum_init }``` defines the initial value of the "loop-carried" variable. 
 This allows the sum value to persist and update across iterations.
-
-Once the loop is created, the builder's insertion point is moved inside the loop's body block:
-- ```currentSum```: This retrieves the currnt value of accumulator for the current iteration. On the first run, this means ```currentSum = sum_init```; on he subsequent run, it is the value yielded by the previous iteration, ```currentSum = nextSum.getResult()```. 
-- **Casting the Induction Variable**: The induction variable (```i```) of the loop is an ```mlir::index``` type. Therefore, it must be cast to ```i32``` via an ```IndexCastOp``` before the ```mlir::arith::AddIOp``` operation.
-- **Addition**: ```nextSum``` is obtianed by adding the casted induction variable (```ivI32```) to the ```currentSum```.
-- **Yield the Result**: The ```scf::YieldOp``` is used to pass the updated total to the subsequent iteration. It is necessary to call ```nextSum.getResult()``` because the destination of the yield operation is the ```mlir::Value``` currentSum (the ```iter_arg```) of the next iteration.
 ```cpp
 // for loop: for (i = 0; i < inputArg0; i++) { ... }  
 auto loop = b.create<mlir::scf::ForOp>( 
@@ -73,5 +67,27 @@ b.create<mlir::scf::YieldOp>(nextSum.getResult());
 // for : end
 b.setInsertionPointAfter(loop);    
 mlir::Value finalSum = loop.getResult(0); // get value from yield of the last iteration
-
 ```
+Once the loop is created, the builder's insertion point is moved inside the loop's body block:
+- ```currentSum```: This retrieves the currnt value of accumulator for the current iteration. On the first run, this means ```currentSum = sum_init```; on he subsequent run, it is the value yielded by the previous iteration, ```currentSum = nextSum.getResult()```. 
+- **Casting the Induction Variable**: The induction variable (```i```) of the loop is an ```mlir::index``` type. Therefore, it must be cast to ```i32``` via an ```IndexCastOp``` before the ```mlir::arith::AddIOp``` operation.
+- **Addition**: ```nextSum``` is obtianed by adding the casted induction variable (```ivI32```) to the ```currentSum```.
+- **Yield the Result**: The ```scf::YieldOp``` is used to pass the updated total to the subsequent iteration. It is necessary to call ```nextSum.getResult()``` because the destination of the yield operation is the ```mlir::Value``` currentSum (the ```iter_arg```) of the next iteration.
+
+## 3. Execution with Python
+By lowering the MLIR logic to LLVM IR and compiling it into a native shared library, we create a high-performance backend that Python can orchestrate with a clean, simple interface. This method successfully bridges the gap between flexible scripting and low-level machine code, providing a scalable way to manage complex functions.
+```bash
+$ ./run.sh
+-----------------------------------
+Computer successfully generated libmyFunc.so
+Result: 1225
+```
+The complete source code is available in [mlir_6_scf_for](./mlir_6_scf_for/).
+
+## Refernce
+
+[1] [MLIR. (n.d.). 'func' Dialect. MLIR Documentation.](https://mlir.llvm.org/docs/Dialects/Func/)
+
+[2] [MLIR. (n.d.). 'arith' Dialect. MLIR Documentation.](https://mlir.llvm.org/docs/Dialects/ArithOps/)
+
+[3] [MLIR. (n.d.). 'scf' Dialect. MLIR Documentation.](https://mlir.llvm.org/docs/Dialects/SCFDialect/)
